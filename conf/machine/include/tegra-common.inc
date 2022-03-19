@@ -9,6 +9,7 @@ KERNEL_IMAGETYPE ?= "Image.gz"
 KERNEL_IMAGETYPES ?= "Image.gz Image"
 KERNEL_IMAGETYPE ?= "Image.gz"
 
+KBUILD_DEFCONFIG ?= "tegra_defconfig"
 KERNEL_ROOTSPEC ?= "root=/dev/mmcblk${devnum}p${distro_bootpart} rw rootwait"
 KERNEL_ARGS ??= ""
 

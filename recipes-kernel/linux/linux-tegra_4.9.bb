@@ -33,7 +33,6 @@ SRC_URI = "git://${KERNEL_REPO};name=machine;branch=${KBRANCH} \
 
 PATH:prepend = "${STAGING_BINDIR_NATIVE}/kern-tools-tegra:"
 
-KBUILD_DEFCONFIG = "tegra_defconfig"
 KCONFIG_MODE = "--alldefconfig"
 
 set_scmversion() {
