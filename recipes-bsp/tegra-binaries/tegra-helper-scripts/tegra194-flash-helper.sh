@@ -141,7 +141,7 @@ if [ -z "$CHIPREV" ]; then
     skipuid="--skipuid"
 fi
 
-if [ -z "$FAB" -o -z "$BOARDID" -o \( "$BOARDID" = "2888" -a \( -z "$BOARDSKU" -o \( "$BOARDSKU" != "0004" -a -z "$BOARDREV" \) \) \) ]; then
+if [ -z "$FAB" -o -z "$BOARDID" ]; then
     if ! python3 $flashappname ${inst_args} --chip 0x19 --applet mb1_t194_prod.bin $skipuid --soft_fuses tegra194-mb1-soft-fuses-l4t.cfg \
 		 --bins "mb2_applet nvtboot_applet_t194.bin" --cmd "dump eeprom boardinfo ${cvm_bin};reboot recovery"; then
 	echo "ERR: could not retrieve EEPROM board information" >&2
@@ -196,9 +196,7 @@ case "$boardid" in
 		TOREV="a02"
 		PMICREV="a04"
 		BPFDTBREV="a02"
-		if [ "$board_sku" = "0006" ]; then
-		    BPFDTBREV="0006-a04"
-		elif [ "$board_sku" = "0004" ] || [ $board_version -gt 300 -a `expr "$board_revision" \> "D.0"` -eq 1 ]; then
+		if [ $board_sku -ge 4 ] || [ $board_version -gt 300 -a `expr "$board_revision" \> "D.0"` -eq 1 ]; then
 		    PMICREV="a04-E-0"
 		    BPFDTBREV="a04"
 		fi
@@ -208,18 +206,10 @@ case "$boardid" in
 		exit 1
 		;;
 	esac
-	;;
-    3660)
-	case $board_version in
-	    [01][0-9][0-9])
-		TOREV="a02"
-		PMICREV="a02"
-		;;
-	    *)
-		echo "ERR: unrecognized board version $board_version" >&2
-		exit 1
-		;;
-	esac
+	if [ "$board_sku" = "0005" ]; then
+	    # AGX Xavier 64GB
+	    BPFDTBREV="0005-a04-maxn"
+	fi
 	;;
     3668)
 	# No revision-specific settings
@@ -231,11 +221,8 @@ case "$boardid" in
 esac
 
 ramcodeargs=
-if [ "$board_id" = "2888" -a "$board_sku" = "0004" ]; then
-    # 32GB AGX Xavier
-    ramcodeargs="--ramcode 2"
-elif [ "$board_id" = "3668" -a "$board_version" = "301" ]; then
-    # Xavier NX A03
+if [ "$board_id" = "2888" -a "$board_sku" = "0008" ]; then
+    # AGX Xavier Industrial
     ramcodeargs="--ramcode 1"
 fi
 
